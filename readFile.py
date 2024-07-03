@@ -63,7 +63,6 @@ class SPASFileReader:
 
                     
 #------------------------------------------------------------------------------------------------
-#s = SPASFileReader("input2.txt")
 # s = SPASFileReader("instances/instance1.txt")
 # s.read_file()
 
@@ -75,22 +74,3 @@ class SPASFileReader:
 # print()   
 # for l in s.lecturers:
 #     print(f"{l} :::> {s.lecturers[l]}")
-
-
-"""  
-=== Output for SPA-ST instance in caldam.txt
-
-s1 :::> {'list': ['p1', 'p2'], 'rank': {'p1': 0, 'p2': 1}, 'list_length': 2, 'head_idx': 0}
-s2 :::> {'list': ['p2', 'p3'], 'rank': {'p2': 0, 'p3': 1}, 'list_length': 2, 'head_idx': 0}
-s3 :::> {'list': ['p3', 'p1'], 'rank': {'p3': 0, 'p1': 1}, 'list_length': 2, 'head_idx': 0}
-s4 :::> {'list': ['p4', 'p1'], 'rank': {'p4': 0, 'p1': 1}, 'list_length': 2, 'head_idx': 0}
-
-p1 :::> {'upper_quota': 1, 'lecturer': 'l1', 'list': ['s3', 's1', 's4'], 'rank': {'s3': 0, 's1': 1, 's4': 2}}
-p2 :::> {'upper_quota': 2, 'lecturer': 'l1', 'list': ['s1', 's2'], 'rank': {'s1': 0, 's2': 1}}
-p3 :::> {'upper_quota': 3, 'lecturer': 'l1', 'list': ['s3', 's2'], 'rank': {'s3': 0, 's2': 1}}
-p4 :::> {'upper_quota': 4, 'lecturer': 'l1', 'list': ['s4'], 'rank': {'s4': 0}}
-
-l1 :::> {'upper_quota': 2, 'projects': {'p4', 'p3', 'p2', 'p1'}, 'list': ['s3', 's1', 's2', 's4'], 'rank': {'s3': 0, 's1': 1, 's2': 2, 's4': 3}}
-l2 :::> {'upper_quota': 2, 'projects': set(), 'list': ['s2', 's4', 's3'], 'rank': {'s2': 0, 's4': 1, 's3': 2}}
-
-"""
