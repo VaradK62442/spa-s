@@ -55,20 +55,20 @@ class SPASStudentOptimal:
         else:
             # if the new student has a rank worse than that of the current worst_student
             # then update this student as the worst_student assigned to the project
-            worst_student = self.M[project]["worst_student"]
-            rank_worst_student = self.projects[project]["rank"][worst_student]
+            current_worst_student = self.M[project]["worst_student"]
+            rank_current_worst_student = self.projects[project]["rank"][current_worst_student]
             rank_student = self.projects[project]["rank"][student]
-            if rank_student > rank_worst_student:
+            if rank_student > rank_current_worst_student:
                 self.M[project]["worst_student"] = student
 
         # keep track of worst_student assigned to l_k
         if self.M[lecturer]["worst_student"] is None: 
             self.M[lecturer]["worst_student"] = student
         else:
-            worst_student = self.M[lecturer]["worst_student"]
-            rank_worst_student = self.lecturers[lecturer]["rank"][worst_student]
+            current_worst_student = self.M[lecturer]["worst_student"]
+            rank_current_worst_student = self.lecturers[lecturer]["rank"][current_worst_student]
             rank_student = self.lecturers[lecturer]["rank"][student]
-            if rank_student > rank_worst_student:
+            if rank_student > rank_current_worst_student:
                 self.M[lecturer]["worst_student"] = student
 
                
@@ -77,52 +77,69 @@ class SPASStudentOptimal:
     # break provisional assignment between s_r and p_j (and l_k)
     # =======================================================================       
     def break_assignment(self, student, project, lecturer):
+        # print("==== Before Update ====")
+        # print(f"{student}: {self.M[student]} : {self.delete[student]} \n")
+        # print(f"{project}: {self.M[project]} : {self.delete[project]} \n")
+        # print(f"{lecturer}: {self.M[lecturer]} : {self.delete[lecturer]} \n")
+
         self.M[student]["assigned"].remove(project) 
         self.M[project]["assigned"].remove(student)
         self.M[lecturer]["assigned"].remove(student)        
         # if student has a non-empty list, add her to the list of unassigned students
         if len(self.delete[student]) > 0:
             self.unassigned.add(student) 
+        
+        self.update_worst_student(student, project, lecturer)
+        
+        # print("==== After Update ====")
+        # print(f"{student}: {self.M[student]} : {self.delete[student]} \n")
+        # print(f"{project}: {self.M[project]} : {self.delete[project]} \n")
+        # print(f"{lecturer}: {self.M[lecturer]} : {self.delete[lecturer]} \n")
 
-        # ---------- update worst student assigned to project and lecturer ----------
-
+    # =======================================================================
+    # update worst student assigned to project and lecturer
+    # ======================================================================= 
+    def update_worst_student(self, student, project, lecturer):
+        
         # if this student is also the worst_student assigned to project, 
         # then we need to update the project's worst_student
-        if student is self.M[project]["worst_student"]:
-            worst_student_rank = self.projects[project]["rank"][student]
-            preferences = self.projects[project]["list"]
-            # find the student who is currently assigned to pj and who is close in rank to the current worst_student
-            worse_student_rank -= 1 # this moves the pointer to the next best student
-            while worst_student_rank >= 0:
-                if preferences[worst_student_rank] in self.M[project]["assigned"]:
-                    self.M[project]["worst_student"] = preferences[worst_student_rank]
-                    break
-                worse_student_rank -= 1
+        if student == self.M[project]["worst_student"]:
+            if self.M[project]["assigned"] == set(): # possible at this point, M(p_j) is empty 
+                self.M[project]["worst_student"] = None
+            else:
+                worst_student_rank = self.projects[project]["rank"][student]
+                preferences = self.projects[project]["list"]
+                # find the student who is currently assigned to pj and who is close in rank to the current worst_student
+                worst_student_rank -= 1 # this moves the pointer to the next best student
+                while worst_student_rank >= 0:
+                    if preferences[worst_student_rank] in self.M[project]["assigned"]:
+                        self.M[project]["worst_student"] = preferences[worst_student_rank]
+                        break
+                    worst_student_rank -= 1
 
         # if this student is also the worst_student assigned to lecturer, 
         # then we need to update the lecturer's worst_student
-        if student is self.M[lecturer]["worst_student"]:
+        # print(student, self.M[lecturer]["worst_student"])
+        if student == self.M[lecturer]["worst_student"]:
             worst_student_rank = self.lecturers[lecturer]["rank"][student]
             preferences = self.lecturers[lecturer]["list"]
             # find the student who is currently assigned to lk and who is close in rank to the current worst_student
-            worse_student_rank -= 1 # this moves the pointer to the next best student
+            worst_student_rank -= 1 # this moves the pointer to the next best student
             while worst_student_rank >= 0:
+                #print(preferences[worst_student_rank])
                 if preferences[worst_student_rank] in self.M[lecturer]["assigned"]:
                     self.M[lecturer]["worst_student"] = preferences[worst_student_rank]
                     break
-                worse_student_rank -= 1
-
-            
-
+                worst_student_rank -= 1
 
     # =======================================================================
     # delete (s_i, p_j) from A(s_i)  -------- (but not from L_k^j)
     # =======================================================================
-    def delete_pair(self, student, project, lecturer):               
+    def delete_pair(self, student, project, lecturer):         
         self.delete[student].remove(project)
         self.delete[project].remove(student)
-        self.delete[lecturer].remove(student)
-        
+        #self.delete[lecturer].remove(student)
+        #print(f"successfully deleted {student} from {project} and {lecturer} ")
     
     # =======================================================================
     # while loop that constructs M from students preference lists
@@ -142,6 +159,8 @@ class SPASStudentOptimal:
                 # ----------- elif lecturer is oversubscribed -----------
                 elif len(self.M[lecturer]["assigned"]) > self.lecturers[lecturer]["upper_quota"]:
                     worst_student = self.M[lecturer]["worst_student"]
+                    # print(f"{worst_student}: {self.M[worst_student]} : {self.delete[worst_student]}")
+                    # print(f"{lecturer}: {self.M[lecturer]} : {self.delete[lecturer]} \n")
                     worst_student_project = list(self.M[worst_student]["assigned"])[0]
                     self.break_assignment(worst_student, worst_student_project, lecturer)   
                 # ----------- if project is full ----------- 
@@ -151,7 +170,11 @@ class SPASStudentOptimal:
                     # now we get the strict successors of worst student from the deletions list of Lkj 
                     strict_successors = [sr for sr in self.projects[project]["list"][rank_worst_student+1:] if sr in self.delete[project]]
                     for st in strict_successors:
-                        self.delete_pair(st, project, lecturer)
+                        #print(self.M)
+                        #print(st, project, lecturer)
+                        self.delete[st].remove(project)
+                        self.delete[project].remove(st)
+                        #print(f"successfully deleted {st} from {project} and {lecturer} ---- project full ")
                 # ----------- if lecturer is full -----------
                 if len(self.M[lecturer]["assigned"]) == self.lecturers[lecturer]["upper_quota"]:
                     worst_student = self.M[lecturer]["worst_student"]
@@ -160,13 +183,17 @@ class SPASStudentOptimal:
                     strict_successors = [sr for sr in self.lecturers[lecturer]["list"][rank_worst_student+1:] if sr in self.delete[lecturer]]
                     P_k = self.lecturers[lecturer]["projects"] # this is a set
                     for st in strict_successors:
-                        st_preference = set(self.delete[student])
+                        st_preference = set(self.delete[st])
                         intersect_projects = P_k.intersection(st_preference)
                         for pu in intersect_projects:
-                            delete(st, pu, lecturer)
-
+                            #print(f"{st}: {self.delete[st]}\n {pu}: {self.delete[pu]} \n {lecturer}: {self.delete[lecturer]}")
+                            self.delete[st].remove(pu)
+                            self.delete[pu].remove(st)
+                            #print(f"successfully deleted {st} from {pu} and {lecturer} ---- lecturer full")
+                        self.delete[lecturer].remove(st)
             # !* if the current student is unassigned in the matching, with a non-empty preference list, we re-add the student to the unassigned list --- this cannot happen in the strict preference case (only in the ties case)
-            if self.M[student]["assigned"] == set() and student not in self.unassigned and len(self.delete[student]) > 0:  self.unassigned.append(student)
+            if self.M[student]["assigned"] == set() and student not in self.unassigned and len(self.delete[student]) > 0:  
+                self.unassigned.append(student)
 
 
     # =======================================================================    
@@ -252,10 +279,5 @@ class SPASStudentOptimal:
                 self.stable_matching[student] = list(self.M[student]["assigned"])[0]
             else: self.stable_matching[student] = " "
 
-        if not self.blocking_pair: return f"Stable matching: {self.stable_matching}"
+        if not self.blocking_pair: return f"student-optimal stable matching: {self.stable_matching}"
         else: return f"Unstable matching: {self.stable_matching}"
-
-
-filename = "input2.txt"
-s = SPASStudentOptimal(filename)
-print(s.run())
