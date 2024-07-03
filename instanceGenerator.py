@@ -140,13 +140,13 @@ class SPAS:
                 # ---------------------------------------------------------------------------------------------------------------------------------------
                 I.close()
     
-# total_students = 6
-# # total_projects =0.5*(students)
-# # total_lecturers = 0.2*(students)
-# lower_bound, upper_bound = 2, 3 # make sure this does not exceed the total number of projects
-# for k in range(1, 6):
-#     S = SPAS(total_students, lower_bound, upper_bound)
-#     S.instance_generator_no_tie()
-#     file = 'instance'+str(k)+'.txt'
-#     filename = 'instances/'+ file
-#     S.write_instance_no_ties(filename)
+total_students = 6
+# total_projects =0.5*(students)
+# total_lecturers = 0.2*(students)
+lower_bound, upper_bound = 2, 3 # make sure this does not exceed the total number of projects
+for k in range(1, 6):
+    S = SPAS(total_students, lower_bound, upper_bound)
+    S.instance_generator_no_tie()
+    file = 'instance'+str(k)+'.txt'
+    filename = 'instances/'+ file
+    S.write_instance_no_ties(filename)
