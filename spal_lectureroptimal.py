@@ -1,5 +1,4 @@
 from readFile import SPASFileReader
-from pprint import pprint as pp
 
 class SPALLecturerOptimal:
     def __init__(self, filename):
@@ -43,12 +42,9 @@ class SPALLecturerOptimal:
     def find_valid_pair(self, l_k):
         # s_i is first valid on l_k list
         # p_j is first valid on s_i list
-        # iterate through all projects first
-        # if fail to find, then iterate through students
 
         for s_i in self.lecturers[l_k]['list']:
             for p_j in self.students[s_i]['list']:
-                # check conditions
                 if self.check_pair_conditions(s_i, p_j, l_k):
                     return (s_i, p_j)
 
@@ -60,7 +56,7 @@ class SPALLecturerOptimal:
         self.M[p]["assigned"].remove(student)
         self.M[l]["assigned"].remove(student)
 
-        # add now under subscribed lecturer to under_subscribed_lecturers
+        # add now under-subscribed lecturer to under_subscribed_lecturers
         # also add at correct position
         self.under_subscribed_lecturers.insert(int(l[1])-1, l)
 
