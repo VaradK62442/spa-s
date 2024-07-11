@@ -60,6 +60,10 @@ class SPALLecturerOptimal:
         self.M[p]["assigned"].remove(student)
         self.M[l]["assigned"].remove(student)
 
+        # add now under subscribed lecturer to under_subscribed_lecturers
+        # also add at correct position
+        self.under_subscribed_lecturers.insert(int(l[1])-1, l)
+
 
     def provisionally_assign(self, student, project, lecturer):
         self.M[student]["assigned"] = project
