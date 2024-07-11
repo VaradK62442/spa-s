@@ -4,6 +4,10 @@ LOG:
 lecturer quotas are not being respected idk why
 otherwise seems correct? need to read more
 
+better implementation, with class in spal_lectureroptimal.py
+working afaik
+logic for if valid pair is not found seems funky, is this correct?
+
 '''
 
 from readFile import SPASFileReader
@@ -13,9 +17,9 @@ filename = "instances/instance1.txt"
 r = SPASFileReader(filename)
 r.read_file()
 
-# pp(r.students)
-# pp(r.projects)
-# pp(r.lecturers)
+pp(r.students)
+pp(r.projects)
+pp(r.lecturers)
 
 s_assignments = {student: None for student in r.students}
 p_assignments = {project: [] for project in r.projects}
@@ -27,12 +31,22 @@ for l_k in r.lecturers:
     # while some lecturer is under_subscribed
     while len(l_assignments[l_k]) < r.lecturers[l_k]['upper_quota']:
         # find pair (s_i, p_j) that satisfies criteria
-        for stu in r.lecturers[l_k]['list']:
-            for pro in r.students[stu]['list']:
+        stu_i = 0
+        pair_found = False
+        while not pair_found and stu_i < len(r.lecturers[l_k]['list']):
+            stu = r.lecturers[l_k]['list'][stu_i]
+            pro_i = 0
+
+            while not pair_found and pro_i < len(r.students[stu]['list']):
+            # for pro in r.students[stu]['list']:
+                pro = r.students[stu]['list'][pro_i]
+
                 if s_assignments[stu] != pro \
                 and pro in r.lecturers[l_k]['projects'] \
                 and len(p_assignments[pro]) < r.projects[pro]['upper_quota'] \
                 and stu in r.projects[pro]['list']:
+                    pair_found = True
+
                     s_i = stu
                     p_j = pro
 
@@ -53,7 +67,11 @@ for l_k in r.lecturers:
                         for p in r.students[s_i]['list'][p_j_pos+1:]:
                             deletions.add((s_i, p))
 
-                    break
+                else:
+                    pro_i += 1
+
+            else:
+                stu_i += 1
 
 
 pp(s_assignments)
