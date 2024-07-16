@@ -12,7 +12,6 @@ class SPALLecturerOptimal:
         self.lecturers = r.lecturers
         self.blocking_pair = False
         self.stable_matching = {}
-        #pp(self.students)
 
         self.M = {} # provisional assignments
         self.under_subscribed_lecturers = list(self.lecturers.keys())
@@ -181,14 +180,6 @@ class SPALLecturerOptimal:
 
         if not self.blocking_pair: return f"lecturer-optimal stable matching: {self.stable_matching}"
         else: return f"Unstable matching: {self.stable_matching}"
-    # def run(self):
-    #     self.while_loop()
-    #     self.matching = {}
-
-    #     for student in self.students:
-    #         self.matching[student] = self.M[student]["assigned"] if self.M[student]["assigned"] else "  "
-
-    #     return self.matching
 
 
 def main():
