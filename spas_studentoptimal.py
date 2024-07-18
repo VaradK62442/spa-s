@@ -28,7 +28,7 @@ class SPASStudentOptimal:
         # set up the provisional assignment data structure
         for student in self.students:
             self.unassigned.add(student)
-            self.M[student] = {"assigned": set()} 
+            self.M[student] = {"assigned": None} 
             self.delete[student] = deepcopy(self.students[student]["list"])           
         for project in self.projects:
             self.M[project] = {"assigned": set(), "worst_student": None}
@@ -38,14 +38,14 @@ class SPASStudentOptimal:
             self.delete[lecturer] = deepcopy(self.lecturers[lecturer]["list"])   
 
         
-        self.blocking_pair = False
-        self.stable_matching = {}
+        self.found_blocking_pair = False # for correctness testing
+        self.stable_matching = {} # for creating stable matching with only students as keys
 
     # =======================================================================
     # provisionally assign s_i to p_j (and to l_k)
     # =======================================================================    
     def provisionally_assign(self, student, project, lecturer):
-        self.M[student]["assigned"].add(project) 
+        self.M[student]["assigned"] = project
         self.M[project]["assigned"].add(student)
         self.M[lecturer]["assigned"].add(student)
 
@@ -77,12 +77,8 @@ class SPASStudentOptimal:
     # break provisional assignment between s_r and p_j (and l_k)
     # =======================================================================       
     def break_assignment(self, student, project, lecturer):
-        # print("==== Before Update ====")
-        # print(f"{student}: {self.M[student]} : {self.delete[student]} \n")
-        # print(f"{project}: {self.M[project]} : {self.delete[project]} \n")
-        # print(f"{lecturer}: {self.M[lecturer]} : {self.delete[lecturer]} \n")
 
-        self.M[student]["assigned"].remove(project) 
+        self.M[student]["assigned"] = None 
         self.M[project]["assigned"].remove(student)
         self.M[lecturer]["assigned"].remove(student)        
         # if student has a non-empty list, add her to the list of unassigned students
@@ -91,10 +87,6 @@ class SPASStudentOptimal:
         
         self.update_worst_student(student, project, lecturer)
         
-        # print("==== After Update ====")
-        # print(f"{student}: {self.M[student]} : {self.delete[student]} \n")
-        # print(f"{project}: {self.M[project]} : {self.delete[project]} \n")
-        # print(f"{lecturer}: {self.M[lecturer]} : {self.delete[lecturer]} \n")
 
     # =======================================================================
     # update worst student assigned to project and lecturer
@@ -192,7 +184,7 @@ class SPASStudentOptimal:
                             #print(f"successfully deleted {st} from {pu} and {lecturer} ---- lecturer full")
                         self.delete[lecturer].remove(st)
             # !* if the current student is unassigned in the matching, with a non-empty preference list, we re-add the student to the unassigned list --- this cannot happen in the strict preference case (only in the ties case)
-            if self.M[student]["assigned"] == set() and student not in self.unassigned and len(self.delete[student]) > 0:  
+            if self.M[student]["assigned"] is None and student not in self.unassigned and len(self.delete[student]) > 0:  
                 self.unassigned.append(student)
 
 
@@ -239,31 +231,31 @@ class SPASStudentOptimal:
 
     # =======================================================================    
     # Is M stable? Check for blocking pair
-    # self.blocking_pair is set to True if blocking pair exists
+    # self.found_blocking_pair is set to True if blocking pair exists
     # =======================================================================
     def check_stability(self):        
         for student in self.students:
             preferred_projects = self.students[student]["list"]
-            if len(self.M[student]["assigned"]) > 0:
-                matched_project = list(self.M[student]["assigned"])[0]
+            if self.M[student]["assigned"] is not None:
+                matched_project = self.M[student]["assigned"]
                 rank_matched_project = self.students[student]["rank"][matched_project]
                 A_si = self.students[student]["list"]
                 preferred_projects = [pj for pj in A_si[:rank_matched_project]] # every project that s_i prefers to her matched project                                
         
             for project in preferred_projects:
                 lecturer = self.projects[project]["lecturer"]
-                if not self.blocking_pair:
-                    self.blocking_pair = self.blockingpair_1bi(student, project, lecturer)
-                if not self.blocking_pair:
-                    self.blocking_pair = self.blockingpair_1bii(student, project, lecturer)
-                if not self.blocking_pair:
-                    self.blocking_pair = self.blockingpair_1biii(student, project, lecturer)
+                if not self.found_blocking_pair:
+                    self.found_blocking_pair = self.blockingpair_1bi(student, project, lecturer)
+                if not self.found_blocking_pair:
+                    self.found_blocking_pair = self.blockingpair_1bii(student, project, lecturer)
+                if not self.found_blocking_pair:
+                    self.found_blocking_pair = self.blockingpair_1biii(student, project, lecturer)
                 
-                if self.blocking_pair:
+                if self.found_blocking_pair:
                 #    print(student, project, lecturer)
                    break
             
-            if self.blocking_pair:
+            if self.found_blocking_pair:
                 # print(student, project, lecturer)
                 break
  
@@ -275,9 +267,10 @@ class SPASStudentOptimal:
         self.check_stability()
         # construct stable matching with only students as keys
         for student in self.students:
-            if len(self.M[student]["assigned"]) > 0:
-                self.stable_matching[student] = list(self.M[student]["assigned"])[0]
-            else: self.stable_matching[student] = " "
+            if self.M[student]["assigned"] is None:
+                self.stable_matching[student] = " "
+            else: 
+                self.stable_matching[student] = self.M[student]["assigned"]
 
-        if not self.blocking_pair: return f"student-optimal stable matching: {self.stable_matching}"
+        if not self.found_blocking_pair: return f"student-optimal stable matching: {self.stable_matching}"
         else: return f"Unstable matching: {self.stable_matching}"
