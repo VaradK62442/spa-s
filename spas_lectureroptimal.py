@@ -38,8 +38,7 @@ class SPALLecturerOptimal:
         
         return self.M[s_i]["assigned"] != p_j \
         and p_j in self.lecturers[l_k]['projects'] \
-        and len(self.M[p_j]["assigned"]) < self.projects[p_j]['upper_quota'] \
-        and s_i in self.projects[p_j]['list']
+        and len(self.M[p_j]["assigned"]) < self.projects[p_j]['upper_quota']
         
 
     def find_valid_pair(self, l_k):
@@ -61,7 +60,7 @@ class SPALLecturerOptimal:
 
         # add now under-subscribed lecturer to under_subscribed_lecturers
         # also add at correct position
-        self.under_subscribed_lecturers.insert(int(l[1])-1, l)
+        self.under_subscribed_lecturers.insert(int(l[1:])-1, l)
 
 
     def provisionally_assign(self, student, project, lecturer):
@@ -94,7 +93,7 @@ class SPALLecturerOptimal:
                 self.delete(s_i, p)
 
             # check if lecturer is still under subscribed
-            if len(self.M[l_k]["assigned"]) >= self.lecturers[l_k]["upper_quota"]:
+            if len(self.M[l_k]["assigned"]) == self.lecturers[l_k]["upper_quota"]:
                 self.under_subscribed_lecturers.remove(l_k)
 
     # =======================================================================    
