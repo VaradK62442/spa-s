@@ -32,7 +32,7 @@ class SPASFileReader:
             preferences = [f"p{k}" for k in entry[1:]]
             # store the index of each project on each student's preference list, for ease of deletion later on in the allocation
             rank = {proj: idx for idx, proj in enumerate(preferences)}
-            self.students[student] = {"list": preferences, "rank": rank, "list_length": len(preferences), "head_idx": 0}
+            self.students[student] = {"list": preferences, "rank": rank}
         
 
         # ------ build the projects dictionary
@@ -59,9 +59,7 @@ class SPASFileReader:
             self.projects[project]["list"] = project_list
             self.projects[project]["rank"] = rank
             
-
-
-                    
+     
 #------------------------------------------------------------------------------------------------
 # s = SPASFileReader("instances/instance1.txt")
 # s.read_file()
