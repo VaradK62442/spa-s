@@ -25,6 +25,7 @@ class ESMS:
         self.proj_rank = r.proj_rank
         
         self.M = {s:'' for s in self.sp}
+        self.all_matchings = []
         self.project_wstcounter = {'p' + str(i): [0, []] for i in range(1, len(self.plc)+1)}
         self.lecturer_wstcounter = {'l' + str(i): [0, []] for i in range(1, len(self.lp)+1)}  
         
@@ -121,8 +122,9 @@ class ESMS:
             if self.blockingpair:
                 self.blockingpair = False
             else:
-                print('-'*50)
-                print(self.M)
+                # print('-'*50)
+                # print(self.M)
+                self.all_matchings.append(self.M.copy())
             
             
         else:

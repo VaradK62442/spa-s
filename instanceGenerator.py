@@ -98,47 +98,46 @@ class SPAS:
 
     def write_instance_no_ties(self, filename):  # writes the SPA-S instance to a txt file
 
-        if __name__ == '__main__':
-            with open(filename, 'w') as I:
+        with open(filename, 'w') as I:
 
-                # ---------------------------------------------------------------------------------------------------------------------------------------
-                #  ...write number of student (n) number of projects (m) number of lecturers (k) ---- for convenience, they are all separated by space
-                I.write(str(self.no_students) + ' ' + str(self.no_projects) + ' ' + str(self.no_lecturers) + '\n')
-                # ---------------------------------------------------------------------------------------------------------------------------------------
+            # ---------------------------------------------------------------------------------------------------------------------------------------
+            #  ...write number of student (n) number of projects (m) number of lecturers (k) ---- for convenience, they are all separated by space
+            I.write(str(self.no_students) + ' ' + str(self.no_projects) + ' ' + str(self.no_lecturers) + '\n')
+            # ---------------------------------------------------------------------------------------------------------------------------------------
 
-                # ---------------------------------------------------------------------------------------------------------------------------------------
-                # .. write the students index and their corresponding preferences ---- 1 2 3 1 7
-                for n in range(1, self.no_students + 1):
-                    preference = self.students[f"s{n}"]["list"]
-                    sliced = [p[1:] for p in preference] # this only grabs the project index, e.g., p20 becomes 20 and p100 becomes 100
-                    I.write(str(n) + ' ')
-                    I.writelines('%s ' % p for p in sliced)
-                    I.write('\n')
-                # ---------------------------------------------------------------------------------------------------------------------------------------
+            # ---------------------------------------------------------------------------------------------------------------------------------------
+            # .. write the students index and their corresponding preferences ---- 1 2 3 1 7
+            for n in range(1, self.no_students + 1):
+                preference = self.students[f"s{n}"]["list"]
+                sliced = [p[1:] for p in preference] # this only grabs the project index, e.g., p20 becomes 20 and p100 becomes 100
+                I.write(str(n) + ' ')
+                I.writelines('%s ' % p for p in sliced)
+                I.write('\n')
+            # ---------------------------------------------------------------------------------------------------------------------------------------
 
-                # ---------------------------------------------------------------------------------------------------------------------------------------
-                #  ..write each project's index, its capacity and the lecturer who proposed it ------- 1 5 1
-                for m in range(1, self.no_projects + 1):
-                    project = f"p{m}"                    
-                    upper_quota = self.projects[project]["upper_quota"]
-                    lecturer = self.projects[project]["lec"][1:] # index of the lecturer that offers the project
-                    I.write(str(m) + ' ' + str(upper_quota) + ' ' + str(lecturer))
-                    
-                    I.write('\n')
-                # ---------------------------------------------------------------------------------------------------------------------------------------
+            # ---------------------------------------------------------------------------------------------------------------------------------------
+            #  ..write each project's index, its capacity and the lecturer who proposed it ------- 1 5 1
+            for m in range(1, self.no_projects + 1):
+                project = f"p{m}"                    
+                upper_quota = self.projects[project]["upper_quota"]
+                lecturer = self.projects[project]["lec"][1:] # index of the lecturer that offers the project
+                I.write(str(m) + ' ' + str(upper_quota) + ' ' + str(lecturer))
+                
+                I.write('\n')
+            # ---------------------------------------------------------------------------------------------------------------------------------------
 
-                # ---------------------------------------------------------------------------------------------------------------------------------------
-                # .. write each lecturer's index, their capacity and their corresponding preferences ---- 1 2 3 1 7
-                for k in range(1, self.no_lecturers + 1):
-                    lecturer = f"l{k}"
-                    upper_quota = self.lecturers[lecturer]["upper_quota"]
-                    preference = self.lecturers[lecturer]["list"]
-                    sliced = [s[1:] for s in preference] # this only grabs the student index, e.g., s20 becomes 20 and s100 becomes 100
-                    I.write(str(k) + ' ' + str(upper_quota) + ' ')
-                    I.writelines('%s ' % s for s in sliced)
-                    I.write('\n')
-                # ---------------------------------------------------------------------------------------------------------------------------------------
-                I.close()
+            # ---------------------------------------------------------------------------------------------------------------------------------------
+            # .. write each lecturer's index, their capacity and their corresponding preferences ---- 1 2 3 1 7
+            for k in range(1, self.no_lecturers + 1):
+                lecturer = f"l{k}"
+                upper_quota = self.lecturers[lecturer]["upper_quota"]
+                preference = self.lecturers[lecturer]["list"]
+                sliced = [s[1:] for s in preference] # this only grabs the student index, e.g., s20 becomes 20 and s100 becomes 100
+                I.write(str(k) + ' ' + str(upper_quota) + ' ')
+                I.writelines('%s ' % s for s in sliced)
+                I.write('\n')
+            # ---------------------------------------------------------------------------------------------------------------------------------------
+            I.close()
     
 total_students = 6
 # total_projects =0.5*(students)
