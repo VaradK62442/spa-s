@@ -174,7 +174,7 @@ class SPALLecturerOptimal:
         self.check_stability()
         # construct stable matching with only students as keys
         for student in self.students:
-            self.stable_matching[student] = self.M[student]["assigned"] if self.M[student]["assigned"] else "  "
+            self.stable_matching[student] = self.M[student]["assigned"] if self.M[student]["assigned"] else ""
             
 
         if not self.blocking_pair: return f"lecturer-optimal stable matching: {self.stable_matching}"

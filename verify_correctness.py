@@ -87,11 +87,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-    # e = ESMS("instances/test.txt")
-    # e.choose(1)
-    # pp(e.all_matchings)
-    # s = SPALLecturerOptimal("?.txt")
-    # pp(e.all_matchings[-1])
-    # pp(s.run())
-    # pp(s.stable_matching in e.all_matchings)
-    # pp(len(e.all_matchings))
