@@ -60,21 +60,23 @@ class VerifyCorrectness:
     
 
     def show_results(self):
-        print(f"Correct: {self._correct_count}\nIncorrect: {self._incorrect_count}")
+        print(f"""
+            Total students: {self._total_students}
+            Lower project bound: {self._lower_project_bound}
+            Upper project bound: {self._upper_project_bound}
+            Repetitions: {self._correct_count + self._incorrect_count}
 
-        # _, ax = plt.subplots()
-        # ax.bar(['Correct', 'Incorrect'], (
-        #     self._correct_count, self._incorrect_count
-        # ))
-        # plt.show()
+            Correct: {self._correct_count}
+            Incorrect: {self._incorrect_count}
+              """)
 
 
 def main():
     TOTAL_STUDENTS = 5
     LOWER_PROJECT_BOUND = 2
     UPPER_PROJECT_BOUND = 3
-    REPETITIONS = 1_000
-    WRITE_TO_FILE = False
+    REPETITIONS = 100_000
+    WRITE_TO_FILE = True
 
     assert UPPER_PROJECT_BOUND <= int(math.ceil(0.5 * TOTAL_STUDENTS)), "Upper project bound is too high"
 
