@@ -3,8 +3,7 @@ from spas_lectureroptimal import SPALLecturerOptimal
 from enumerateSMs import ESMS
 
 import math
-from pprint import pprint as pp
-from matplotlib import pyplot as plt
+import os
 from tqdm import tqdm
 
 
@@ -43,18 +42,11 @@ class VerifyCorrectness:
     
 
     def run(self):
-        def write_msg_to_file(msg):
-            if self._write_to_file:
-                with open(self._results_dir + self._results_filename, 'a') as f:
-                    f.write(msg)
-
         s = self.generate_instances()
         if self.verify_instance():
             self._correct_count += 1
-            write_msg_to_file(f"PASS: Instance occurs last in list of all matchings\n")
         else:
             self._incorrect_count += 1
-            write_msg_to_file(f"FAIL: Instance does not occur in list of all matchings - {self._incorrect_count}\n")
             if self._write_to_file:
                 s.write_instance_no_ties(f"{self._results_dir}incorrect_instance_{self._incorrect_count}.txt")
     
@@ -79,6 +71,7 @@ def main():
     WRITE_TO_FILE = True
 
     assert UPPER_PROJECT_BOUND <= int(math.ceil(0.5 * TOTAL_STUDENTS)), "Upper project bound is too high"
+    assert os.path.isdir('results'), "Please create a 'results' directory"
 
     v = VerifyCorrectness(TOTAL_STUDENTS, LOWER_PROJECT_BOUND, UPPER_PROJECT_BOUND, WRITE_TO_FILE)
     for _ in tqdm(range(REPETITIONS)):
