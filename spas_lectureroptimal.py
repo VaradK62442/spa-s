@@ -56,12 +56,13 @@ class SPALLecturerOptimal:
         l = self.projects[p]["lecturer"]
         self.M[student]["assigned"] = None
         self.M[p]["assigned"].remove(student)
+
+        # add under-subscribed lecturer to under_subscribed_lecturers
+        if len(self.M[l]["assigned"]) == self.lecturers[l]["upper_quota"]:
+            self.under_subscribed_lecturers.insert(int(l[1:])-1, l)
+
         self.M[l]["assigned"].remove(student)
-
-        # add now under-subscribed lecturer to under_subscribed_lecturers
-        # also add at correct position
-        self.under_subscribed_lecturers.insert(int(l[1:])-1, l)
-
+            
 
     def provisionally_assign(self, student, project, lecturer):
         self.M[student]["assigned"] = project
@@ -95,6 +96,12 @@ class SPALLecturerOptimal:
             # check if lecturer is still under subscribed
             if len(self.M[l_k]["assigned"]) == self.lecturers[l_k]["upper_quota"]:
                 self.under_subscribed_lecturers.remove(l_k)
+
+            # build under subscribed list
+            self.under_subscribed_lecturers = []
+            for l in self.lecturers:
+                if len(self.M[l]["assigned"]) < self.lecturers[l]["upper_quota"]:
+                    self.under_subscribed_lecturers.append(l)
 
     # =======================================================================    
     # blocking pair types
