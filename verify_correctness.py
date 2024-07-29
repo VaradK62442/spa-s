@@ -16,15 +16,16 @@ class VerifyCorrectness:
 
         self._default_filename = 'instance.txt'
         self._results_dir = 'results/'
-        self._results_filename = '_results.txt'
         self._correct_count = 0
         self._incorrect_count = 0
 
 
-    def generate_instances(self):
+    def generate_instances(self, filename=None):
         s = InstanceGenerator(self._total_students, self._lower_project_bound, self._upper_project_bound)
         s.instance_generator_no_tie()
-        s.write_instance_no_ties(self._default_filename)
+        if filename is None:
+            filename = self._default_filename
+        s.write_instance_no_ties(filename)
         return s
 
 
@@ -71,7 +72,7 @@ def main():
     WRITE_TO_FILE = True
 
     assert UPPER_PROJECT_BOUND <= int(math.ceil(0.5 * TOTAL_STUDENTS)), "Upper project bound is too high"
-    assert os.path.isdir('results'), "Please create a 'results' directory"
+    assert WRITE_TO_FILE and os.path.isdir('results'), "Please create a 'results' directory"
 
     v = VerifyCorrectness(TOTAL_STUDENTS, LOWER_PROJECT_BOUND, UPPER_PROJECT_BOUND, WRITE_TO_FILE)
     for _ in tqdm(range(REPETITIONS)):
