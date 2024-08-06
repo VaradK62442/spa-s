@@ -274,3 +274,11 @@ class SPASStudentOptimal:
 
         if not self.found_blocking_pair: return f"student-optimal stable matching: {self.stable_matching}"
         else: return f"Unstable matching: {self.stable_matching}"
+
+
+def main():
+    s = SPASStudentOptimal("i_copy.txt")
+    print(s.run())
+
+if __name__ == "__main__":
+    main()
