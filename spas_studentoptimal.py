@@ -153,7 +153,7 @@ class SPASStudentOptimal:
                     worst_student = self.M[lecturer]["worst_student"]
                     # print(f"{worst_student}: {self.M[worst_student]} : {self.delete[worst_student]}")
                     # print(f"{lecturer}: {self.M[lecturer]} : {self.delete[lecturer]} \n")
-                    worst_student_project = list(self.M[worst_student]["assigned"])[0]
+                    worst_student_project = self.M[worst_student]["assigned"]
                     self.break_assignment(worst_student, worst_student_project, lecturer)   
                 # ----------- if project is full ----------- 
                 if len(self.M[project]["assigned"]) == self.projects[project]["upper_quota"]:
@@ -268,7 +268,7 @@ class SPASStudentOptimal:
         # construct stable matching with only students as keys
         for student in self.students:
             if self.M[student]["assigned"] is None:
-                self.stable_matching[student] = " "
+                self.stable_matching[student] = ""
             else: 
                 self.stable_matching[student] = self.M[student]["assigned"]
 
