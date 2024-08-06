@@ -1,5 +1,6 @@
 from instanceGenerator import SPAS as InstanceGenerator
 from spas_lectureroptimal import SPALLecturerOptimal
+from spas_studentoptimal import SPASStudentOptimal
 from enumerateSMs import ESMS
 
 import math
@@ -34,12 +35,14 @@ class VerifyCorrectness:
             filename = self._default_filename
 
         e = ESMS(filename)
-        s = SPALLecturerOptimal(filename)
+        s = SPASStudentOptimal(filename)
+        l = SPALLecturerOptimal(filename)
 
         e.choose(1)
         s.run()
+        l.run()
 
-        return s.stable_matching == e.all_matchings[-1]
+        return l.stable_matching == e.all_matchings[-1] and s.stable_matching == e.all_matchings[0]
     
 
     def run(self):
